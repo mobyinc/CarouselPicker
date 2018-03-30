@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="CarouselPicker">
         <attr name="items_visible" />
+        <attr name="vertical" format="boolean" />
     </declare-styleable>
     <attr name="items_visible" format="enum">
         <enum name="three" value="3" />

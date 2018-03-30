@@ -18,18 +18,35 @@
         android:background="#CCC"
         app:items_visible="three" />
 
-    <in.goodiebag.carouselpicker.CarouselPicker
-        android:id="@+id/textCarousel"
+    <LinearLayout
+        android:id="@+id/textLayout"
         android:layout_below="@id/imageCarousel"
-        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#CCC"
-        app:items_visible="three" />
+        android:layout_height="wrap_content">
+        <in.goodiebag.carouselpicker.CarouselPicker
+            android:id="@+id/textCarousel"
+            android:layout_marginBottom="20dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:vertical="true"
+            android:background="#CCC"
+            app:items_visible="three" />
+        <in.goodiebag.carouselpicker.CarouselPicker
+            android:id="@+id/textCarousel2"
+            android:layout_marginBottom="20dp"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:vertical="true"
+            android:background="#BBB"
+            app:items_visible="three" />
+    </LinearLayout>
 
     <in.goodiebag.carouselpicker.CarouselPicker
         android:id="@+id/mixCarousel"
-        android:layout_below="@id/textCarousel"
+        android:layout_below="@id/textLayout"
         android:layout_marginBottom="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

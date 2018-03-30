@@ -14,9 +14,6 @@ public class CustomPageTransformer implements ViewPager.PageTransformer {
 
     private ViewPager viewPager;
 
-    public CustomPageTransformer(Context context) {
-    }
-
     public void transformPage(View view, float position) {
         if (viewPager == null) {
             viewPager = (ViewPager) view.getParent();

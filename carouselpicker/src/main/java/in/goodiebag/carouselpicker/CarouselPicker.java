@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -24,6 +25,8 @@ import java.util.List;
 public class CarouselPicker extends ViewPager {
     private int itemsVisible = 3;
     private float divisor;
+
+    private boolean verticalOrientation = false;
 
     public CarouselPicker(Context context) {
         this(context, null);
@@ -59,19 +62,37 @@ public class CarouselPicker extends ViewPager {
                     divisor = 3;
                     break;
             }
+            verticalOrientation = array.getBoolean(R.styleable.CarouselPicker_vertical, false);
             array.recycle();
         }
     }
 
     private void init() {
-        this.setPageTransformer(false, new CustomPageTransformer(getContext()));
+        PageTransformer transformer = verticalOrientation ? new VerticalPageTransformer() : new CustomPageTransformer();
+        this.setPageTransformer(false, transformer);
         this.setClipChildren(false);
         this.setFadingEdgeLength(0);
     }
 
+    /**
+     * Swaps the X and Y coordinates of your touch event for vertical navigation
+     */
+    private MotionEvent swapXY(MotionEvent ev) {
+        float width = getWidth();
+        float height = getHeight();
+
+        float newX = (ev.getY() / height) * width;
+        float newY = (ev.getX() / width) * height;
+
+        ev.setLocation(newX, newY);
+
+        return ev;
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
+        //This will measure each of the children and then set the height based off that
+        //So i should make something that will multiply the height by the divisor
         int height = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
@@ -80,13 +101,30 @@ public class CarouselPicker extends ViewPager {
             if (h > height) height = h;
         }
 
+        if(verticalOrientation)
+        {
+            int paddingValue = (int)(getContext().getResources().getDisplayMetrics().density * 60);
+            height += paddingValue;
+        }
+
         heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
 
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         int w = getMeasuredWidth();
-        setPageMargin((int) (-w / divisor));
+        int h = getMeasuredHeight();
+        setPageMargin((int) (- (verticalOrientation ? h : w) / divisor));
+    }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev){
+        boolean intercepted = super.onInterceptTouchEvent(verticalOrientation ? swapXY(ev) : ev);
+        if (verticalOrientation) swapXY(ev); // return touch coordinates to original reference frame for any child views
+        return intercepted;
+    }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        return super.onTouchEvent(verticalOrientation ? swapXY(ev) : ev);
     }
 
     @Override
